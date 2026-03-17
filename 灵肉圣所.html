@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>堕肉之歌 — 灵肉圣所</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0c0c11; --bg-nav: #0f0f17; --bg-card: #15151f;
+    --border: #1e1e30; --border-light: #2a2a40;
+    --text: #c0c0d0; --text-body: #b0b0c4; --text-dim: #606078; --text-bright: #e4e4ee;
+    --accent: #4a8adf; --accent-dim: #2a4a70; --accent-bg: rgba(74,138,223,0.06);
+    --faction: #c45a6a; --faction-dim: #7a2a3a; --faction-bg: rgba(196,90,106,0.06);
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text-body); font-family: 'Noto Sans SC', sans-serif; line-height: 1.85; font-size: 15px; }
+  nav { position: fixed; top: 0; left: 0; bottom: 0; width: 230px; background: var(--bg-nav); border-right: 1px solid var(--border); padding: 28px 0 40px; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+  nav::-webkit-scrollbar { width: 3px; } nav::-webkit-scrollbar-track { background: transparent; } nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .nav-header { padding: 0 22px; margin-bottom: 20px; }
+  .nav-title { font-family: 'Noto Serif SC', serif; font-size: 16px; font-weight: 700; color: var(--text-bright); letter-spacing: 3px; margin-bottom: 4px; }
+  .nav-subtitle { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+  .nav-search { padding: 0 16px; margin-bottom: 16px; }
+  .nav-search input { width: 100%; padding: 7px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; font-family: 'Noto Sans SC', sans-serif; outline: none; transition: border-color 0.2s; }
+  .nav-search input::placeholder { color: var(--text-dim); } .nav-search input:focus { border-color: var(--faction-dim); }
+  .nav-pages { padding: 0 12px; margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .nav-page-tab { padding: 6px 0; text-align: center; font-size: 10px; color: var(--text-dim); border: 1px solid var(--border); border-radius: 5px; text-decoration: none; transition: all 0.2s; letter-spacing: 0.5px; }
+  .nav-page-tab:hover { color: var(--text); border-color: var(--border-light); }
+  .nav-page-tab.current { color: var(--faction); border-color: var(--faction-dim); background: var(--faction-bg); }
+  .nav-section { margin-bottom: 2px; }
+  .nav-section-toggle { display: flex; align-items: center; justify-content: space-between; padding: 10px 22px 6px; cursor: pointer; user-select: none; }
+  .nav-section-label { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; font-weight: 500; }
+  .nav-section-arrow { font-size: 8px; color: var(--text-dim); transition: transform 0.2s; }
+  .nav-section.collapsed .nav-section-arrow { transform: rotate(-90deg); }
+  .nav-section-items { overflow: hidden; transition: max-height 0.25s ease; }
+  .nav-section.collapsed .nav-section-items { max-height: 0 !important; }
+  .nav-link { display: block; padding: 5px 22px 5px 28px; font-size: 13px; color: var(--text-dim); text-decoration: none; border-left: 2px solid transparent; transition: all 0.15s; }
+  .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+  .nav-link.active { color: var(--faction); border-left-color: var(--faction); background: var(--faction-bg); }
+  .nav-link.search-hidden { display: none; }
+  main { margin-left: 230px; display: flex; justify-content: center; padding: 0 40px; }
+  .content { max-width: 700px; width: 100%; padding: 56px 0 140px; }
+  .hero { margin-bottom: 56px; padding-bottom: 44px; border-bottom: 1px solid var(--border); }
+  .hero .faction-label { font-size: 11px; color: var(--faction); letter-spacing: 2px; margin-bottom: 10px; opacity: 0.7; }
+  .hero h1 { font-family: 'Noto Serif SC', serif; font-size: 30px; font-weight: 700; color: var(--text-bright); letter-spacing: 4px; margin-bottom: 10px; }
+  .hero .motto { font-family: 'Noto Serif SC', serif; font-size: 15px; color: var(--text-dim); font-style: italic; margin-bottom: 20px; }
+  .hero .summary { font-size: 14px; color: var(--text-dim); line-height: 1.9; }
+  .section { margin-bottom: 20px; scroll-margin-top: 40px; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .section h2 { font-family: 'Noto Serif SC', serif; font-size: 21px; font-weight: 700; color: var(--text-bright); letter-spacing: 2px; }
+  .section .tag { font-size: 11px; color: var(--faction); letter-spacing: 1px; opacity: 0.6; }
+  .section .subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; font-style: italic; }
+  .section p { margin-bottom: 18px; text-align: justify; line-height: 1.9; }
+  .section p:last-child { margin-bottom: 0; }
+  .section p strong { color: var(--text); font-weight: 500; }
+  .divider { height: 1px; background: var(--border); margin: 44px 0; }
+  .callout { border-left: 2px solid var(--faction-dim); padding: 14px 22px; margin: 22px 0; background: var(--faction-bg); border-radius: 0 6px 6px 0; font-size: 14px; color: var(--text-dim); line-height: 1.85; font-style: italic; }
+  .relations { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .rel { font-size: 11px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 12px; color: var(--text-dim); cursor: pointer; text-decoration: none; background: rgba(255,255,255,0.01); transition: all 0.2s; }
+  .rel:hover { border-color: var(--faction-dim); color: var(--faction); background: rgba(196,90,106,0.1); transform: translateY(-1px); }
+  .visual-break { text-align: center; margin: 48px 0; color: var(--border-light); font-size: 14px; letter-spacing: 12px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+  .info-item { padding: 12px 16px; background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 6px; }
+  .info-label { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 4px; }
+  .info-value { font-size: 13px; color: var(--text); }
+  @media (max-width: 900px) { nav { display: none; } main { margin-left: 0; padding: 0 20px; } .content { padding: 36px 0 80px; } .info-grid { grid-template-columns: 1fr; } }
+  ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-header">
+    <div class="nav-title">堕肉之歌</div>
+    <div class="nav-subtitle">灵肉圣所 · 阵营设定</div>
+  </div>
+  <div class="nav-search"><input type="text" id="search-input" placeholder="搜索词条..." oninput="filterNav(this.value)"></div>
+  <div class="nav-pages">
+    <a class="nav-page-tab" href="世界观图谱.html">世界设定</a>
+    <a class="nav-page-tab" href="灰烬秘塔.html">灰烬秘塔</a>
+    <a class="nav-page-tab" href="至构联邦.html">至构联邦</a>
+    <a class="nav-page-tab current" href="灵肉圣所.html">灵肉圣所</a>
+  </div>
+  <div class="nav-section" id="nav-overview">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-overview')"><span class="nav-section-label">总览</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#overview" data-name="阵营总览 灵肉圣所">阵营总览</a>
+      <a class="nav-link" href="#history" data-name="起源与命名">起源与命名</a>
+    </div>
+  </div>
+  <div class="nav-section" id="nav-city">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-city')"><span class="nav-section-label">原胚圣堂</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#city" data-name="原胚圣堂 主城">主城概述</a>
+      <a class="nav-link" href="#structure" data-name="城市结构">城市结构</a>
+    </div>
+  </div>
+  <div class="nav-section" id="nav-system">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-system')"><span class="nav-section-label">体系</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#power" data-name="力量体系">力量体系</a>
+      <a class="nav-link" href="#growth" data-name="升级路线 资源">升级路线与资源</a>
+      <a class="nav-link" href="#org" data-name="组织结构">组织结构</a>
+    </div>
+  </div>
+  <div class="nav-section" id="nav-culture">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-culture')"><span class="nav-section-label">气质与立场</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#stance" data-name="阵营气质">阵营气质</a>
+      <a class="nav-link" href="#views" data-name="对外立场">对外立场</a>
+      <a class="nav-link" href="#interlayer-view" data-name="夹层观">夹层观</a>
+    </div>
+  </div>
+</nav>
+<main><div class="content">
+  <div class="hero">
+    <div class="faction-label">阵营 · 生物侧</div>
+    <h1>灵肉圣所</h1>
+    <div class="motto">「圣性不在天上，而在血肉之中。」</div>
+    <div class="summary">鱼缸宇宙三大路线之一的生物侧阵营。代表着以血肉、基因与自我蜕变接近世界本质的文明道路。将生命崇拜、宗教仪式与血肉进化结合为一体的活体文明共同体。</div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">路线定位</div><div class="info-value">生物侧</div></div>
+      <div class="info-item"><div class="info-label">主城</div><div class="info-value">原胚圣堂</div></div>
+      <div class="info-item"><div class="info-label">核心理念</div><div class="info-value">圣性不在天上，而在血肉之中</div></div>
+      <div class="info-item"><div class="info-label">阵营象征</div><div class="info-value">包裹发光心核的脊骨圣徽</div></div>
+    </div>
+  </div>
+
+  <div class="section" id="overview">
+    <div class="section-header"><h2>阵营总览</h2><span class="tag">总览</span></div>
+    <div class="subtitle">活体文明共同体</div>
+    <p>灵肉圣所不是单纯的怪物化，也不是普通意义上的生化技术，而是一整条文明道路——通过血肉、基因、器官、进化与自我改造，让生命本身成为力量、武器与圣性。</p>
+    <p>灵肉圣所相信，宇宙中最伟大的器物不是法杖，不是机械，也不是神赐圣器，而是生命本身。在他们看来：血肉不是软弱的载体，而是可被升格的圣器；器官不是天生固定的结构，而是能够被重塑的功能模块；基因不是束缚，而是等待开启的圣典；进化不是自然偶然，而是可以主动追求的道路。</p>
+    <p>他们不崇拜诸神。他们认为，向天穹祈祷从来不是生命真正的终点。真正的圣性，不在外部赐予，而在生命内部孕育。</p>
+    <div class="callout">圣性不在天上，而在血肉之中。——灵肉圣所核心信条</div>
+    <div class="relations">
+      <a class="rel" href="世界观图谱.html#civilizations">← 属于：内层文明</a>
+      <a class="rel" href="#city">→ 主城：原胚圣堂</a>
+      <a class="rel" href="世界观图谱.html#interlayer">→ 狩猎：夹层</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="history">
+    <div class="section-header"><h2>起源与命名</h2><span class="tag">总览</span></div>
+    <div class="subtitle">灵与肉的共同升格</div>
+    <p>"灵肉"意味着他们并不只崇拜粗暴的肉体。他们追求的不是单纯更强的血肉，而是灵与肉的共同升格。在他们眼中：没有灵性的肉体，只是兽；没有载体的意志，只是空响；唯有灵与肉彼此嵌合、彼此重塑，才会诞生真正的圣性。</p>
+    <p>"圣所"则说明他们的文明并不以帝国、联邦或学院的方式自居。他们更像一处朝圣体系，一片由教义、仪式、改造与共同信念维系起来的神圣领域。</p>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <div class="section" id="city">
+    <div class="section-header"><h2>原胚圣堂</h2><span class="tag">主城</span></div>
+    <div class="subtitle">一具仍在呼吸的活体教堂</div>
+    <p>原胚圣堂是灵肉圣所的主城，也是整个生物阵营最核心的活体圣城。它不是由砖石与金属建造，而是一座由血肉、骨骼、神经与活体组织共同构成的巨大教堂。</p>
+    <p>"原胚"意味着一切更高生命的起点，也是尚未完成、却孕育无限可能的初始形态。整座城市会呼吸、会脉动、会生长、会愈合。这里没有石雕与机械梁柱，只有骨质穹顶、脊柱长廊、神经束彩窗、脉动膜翼与温热的活体地面。</p>
+    <p>视觉上，原胚圣堂呈现为：一座巨大而活着的血肉教堂矗立在黑暗地表之上，穹顶像肋骨般向天空张开，墙体缓慢起伏仿佛整座建筑在呼吸。教堂内部垂落着发光神经束如彩窗与圣灯，地面有温热而缓慢搏动的血色脉络，祭坛后方不是雕像而是半沉睡的巨型圣躯结构，空气里回荡着低沉圣歌、心跳与器官共鸣。</p>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">主色</div><div class="info-value">苍白 · 骨金 · 暗红 · 深紫</div></div>
+      <div class="info-item"><div class="info-label">点缀色</div><div class="info-value">温暖血光 · 微弱圣白 · 神经幽蓝</div></div>
+    </div>
+    <div class="callout">整体气质——神圣、压抑、庄严、异质、温热、带着近乎宗教性的生命崇拜感。</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="structure">
+    <div class="section-header"><h2>城市结构</h2><span class="tag">原胚圣堂</span></div>
+    <div class="subtitle">从圣心到外庭的五层圣域</div>
+    <p><strong>一、原初之心</strong></p>
+    <p>整座原胚圣堂最核心、最神圣、最禁忌的区域。一座巨大的心脏圣殿，或一具半沉睡的原始圣骸核心。整座圣城的脉动、营养输送、再生与扩张，全部由这里驱动。它既是城市的能源中枢，也是灵肉圣所精神意义上的"圣心"。</p>
+    <p><strong>二、朝圣中殿</strong></p>
+    <p>信徒、改造者、战士与朝圣者最常抵达的区域。承担祷告与宣讲、新生者入教仪式、赐骨与祝血等基础仪式、教义传授和阵营公开集会。高耸的骨柱、低沉的圣歌、脉动的长廊与发光神经束构成了鲜明的宗教氛围。</p>
+    <p><strong>三、孵化与改造区</strong></p>
+    <p>灵肉圣所最有辨识度的功能区域，包括基因圣库、器官培育池、骨甲孵化室、组织缝合厅、蜕变修道院和突变试炼室。在这里，力量不是锻造出来的，也不是学习来的，而是长出来的、植入进去的、吸收进去的、蜕变出来的。</p>
+    <p><strong>四、圣歌回廊</strong></p>
+    <p>遍布整座圣城的神经长廊与共鸣通道。这些回廊会传导低沉而持续的脉搏音与圣歌，让整座原胚圣堂始终笼罩在似祷告、似呼吸、似意识低语的氛围中。信徒认为，这不是单纯的声音，而是圣堂本身在回应他们。</p>
+    <p><strong>五、狩猎外庭</strong></p>
+    <p>主城外围设有猎手集结区、精华回收池、异变兽栏、活体兵器孵化场、决斗试炼场和战后样本处理所。这部分决定了灵肉圣所不仅神秘，也危险且富有进攻性。</p>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <div class="section" id="power">
+    <div class="section-header"><h2>力量体系</h2><span class="tag">体系</span></div>
+    <div class="subtitle">生命自身的重塑与升格</div>
+    <p>灵肉圣所的力量不来自法器或机械，而来自生命自身的重塑与升格。力量表现形式包括：肉身强化、骨甲生长、器官异化、组织再生、基因改造、形态变化、精华吸收、血肉武装、感官强化、临时突变，以及对敌适应性进化。在他们看来，最完美的武器不是握在手中的东西，而是长在身体里的东西。</p>
+    <p><strong>战斗风格</strong></p>
+    <p>灵肉圣所的战斗不是最稳定的，也不是最理性的，但一定是最具侵略性、最具成长压迫感、最有掠食者体验的路线之一。他们擅长高机动近战、再生与续航、单体压制、形态切换、狂暴强化、血肉武装展开、吸血与掠夺、通过击杀临时获取增益，以及针对敌人进行适应性抗性变化。他们的强大不只是数值高，而在于越战越强、越猎越像更高阶生命。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="growth">
+    <div class="section-header"><h2>升级路线与资源</h2><span class="tag">体系</span></div>
+    <div class="subtitle">狩猎 → 提取 → 吸收 → 存档 → 改造 → 蜕变</div>
+    <p>成长循环：进入夹层或战场 → 猎杀畸变怪物、异变首领或高价值目标 → 提取生命精华、基因样本、异变器官 → 将样本存入基因库 → 解锁改造分支、器官强化树与血肉技能 → 进行身体重塑与能力植入 → 前往更危险区域猎取更高阶样本。最核心的成长资源不是单纯经验值，而是可被吸收与继承的生命信息。</p>
+    <p><strong>核心资源</strong></p>
+    <p><strong>生命精华</strong>——从强大生物、畸变怪物或特殊目标体内提取的活性能量，用于强化基础属性、激活蜕变与维持活体系统。</p>
+    <p><strong>基因样本</strong>——包括完整基因、异变片段、祖源序列、适应性模板等，是解锁新技能树与新形态的核心资源。</p>
+    <p><strong>异变器官与组织材料</strong>——包括复眼、毒腺、骨核、触须束、再生腔体、装甲外皮等，可用于器官移植、活体武装、骨甲构筑与高阶改造。</p>
+    <div class="callout">真正的朝圣从不是仰望天上的神，而是将自己的身体一步步雕刻成更高生命的容器。</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="org">
+    <div class="section-header"><h2>组织结构</h2><span class="tag">体系</span></div>
+    <div class="subtitle">从圣所共祭庭到狩猎前线</div>
+    <p><strong>圣所共祭庭</strong>——最高层，负责教义解释、圣堂运作、改造准则与重大远征许可。</p>
+    <p><strong>第一蜕者</strong>——圣所最高领袖。</p>
+    <p><strong>教义部门</strong>——负责信条宣讲、仪式设计、朝圣秩序与新人接纳。</p>
+    <p><strong>基因圣库部门</strong>——负责样本存储、祖源分类、改造权限与高阶血统研究。</p>
+    <p><strong>改造部门</strong>——负责器官植入、骨甲培育、蜕变手术与战后修复。</p>
+    <p><strong>狩猎部门</strong>——负责夹层远征、精华回收、猎团组织与高危目标清剿。</p>
+    <p><strong>圣歌与礼仪部门</strong>——负责圣堂共鸣网络、祷告体系与精神维系。</p>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <div class="section" id="stance">
+    <div class="section-header"><h2>阵营气质</h2><span class="tag">气质与立场</span></div>
+    <div class="subtitle">生命崇拜与自我神化的活体宗教文明</div>
+    <p>灵肉圣所不是一群失控怪物，也不是单纯邪教。它更像一个将生命崇拜、血肉科技、改造仪式与自我神化融合到极致的活体宗教文明。他们通常显得安静、虔诚、冷漠、自信，近乎温柔地残酷，对蜕变抱有绝对信念。他们不仇恨神明，只是认为神明不该是终点——在他们看来，生命本身就有资格向更高处生长。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="views">
+    <div class="section-header"><h2>对外立场</h2><span class="tag">气质与立场</span></div>
+    <div class="subtitle">他们如何看待另外两条路线</div>
+    <p><strong>对灰烬秘塔（魔法侧）</strong></p>
+    <p>"你们执着于理解世界，却始终与世界保持距离；你们只敢阅读深渊的文字，却不敢让深渊在体内开花。"在他们看来，魔法太偏向外部呼唤与远程操控，缺乏真正的"自我蜕变"。</p>
+    <p><strong>对至构联邦（科技侧）</strong></p>
+    <p>"你们把力量铸在钢铁之中，却不敢把力量种进自身；你们制造无数武器，却从未真正让自己成为武器。"在他们看来，机械再强，也终究是外物。只有生命本身，才能跟着战斗、痛苦与猎杀不断进化。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="interlayer-view">
+    <div class="section-header"><h2>夹层观</h2><span class="tag">气质与立场</span></div>
+    <div class="subtitle">他们眼中的夹层</div>
+    <p>对于灵肉圣所而言，夹层不是禁区，不是图书馆，也不是矿场。夹层是生命异变的猎场、圣性胚胎的孵化场，以及更高进化的试炼地。他们在夹层中看到的不是理论与资源，而是更强大的猎物、更古老的生命样本、更危险也更珍贵的异化器官，以及能够推动自身升格的圣性残片。</p>
+    <div class="callout">他们探索夹层的态度，不是解读，也不是开发，而是狩猎、汲取、继承。</div>
+    <div class="relations">
+      <a class="rel" href="世界观图谱.html#interlayer">→ 世界设定：夹层</a>
+      <a class="rel" href="世界观图谱.html#rule-complex">→ 世界设定：规则复合体</a>
+    </div>
+  </div>
+</div></main>
+<script>
+const sections=document.querySelectorAll('.section'),navLinks=document.querySelectorAll('.nav-link');
+const observer=new IntersectionObserver(e=>{e.forEach(entry=>{if(entry.isIntersecting){navLinks.forEach(l=>l.classList.remove('active'));const a=document.querySelector(`.nav-link[href="#${entry.target.id}"]`);if(a)a.classList.add('active')}})},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>observer.observe(s));
+function toggleSection(id){document.getElementById(id).classList.toggle('collapsed')}
+function filterNav(q){q=q.trim().toLowerCase();navLinks.forEach(l=>{const n=(l.dataset.name||l.textContent).toLowerCase();l.classList.toggle('search-hidden',q!==''&&!n.includes(q))});document.querySelectorAll('.nav-section').forEach(s=>{if(q)s.classList.remove('collapsed')})}
+</script>
+</body>
+</html>

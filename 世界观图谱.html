@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>堕肉之歌 — 世界观设定</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0c0c11;
+    --bg-nav: #0f0f17;
+    --bg-card: #15151f;
+    --border: #1e1e30;
+    --border-light: #2a2a40;
+    --text: #c0c0d0;
+    --text-body: #b0b0c4;
+    --text-dim: #606078;
+    --text-bright: #e4e4ee;
+    --accent: #4a8adf;
+    --accent-dim: #2a4a70;
+    --accent-bg: rgba(74,138,223,0.06);
+    --accent-hover: rgba(74,138,223,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-body);
+    font-family: 'Noto Sans SC', sans-serif;
+    line-height: 1.85;
+    font-size: 15px;
+  }
+
+  /* ===== Side Nav ===== */
+  nav {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 230px;
+    background: var(--bg-nav);
+    border-right: 1px solid var(--border);
+    padding: 28px 0 40px;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex; flex-direction: column;
+  }
+  nav::-webkit-scrollbar { width: 3px; }
+  nav::-webkit-scrollbar-track { background: transparent; }
+  nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .nav-header { padding: 0 22px; margin-bottom: 20px; }
+  .nav-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+  .nav-subtitle {
+    font-size: 11px; color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* Search */
+  .nav-search {
+    padding: 0 16px; margin-bottom: 16px;
+  }
+  .nav-search input {
+    width: 100%; padding: 7px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: 'Noto Sans SC', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .nav-search input::placeholder { color: var(--text-dim); }
+  .nav-search input:focus { border-color: var(--accent-dim); }
+
+  /* Page tabs */
+  .nav-pages {
+    padding: 0 12px; margin-bottom: 12px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .nav-page-tab {
+    padding: 6px 0;
+    text-align: center;
+    font-size: 10px; color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .nav-page-tab:hover { color: var(--text); border-color: var(--border-light); }
+  .nav-page-tab.current {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+    background: var(--accent-bg);
+  }
+
+  /* Collapsible sections */
+  .nav-section { margin-bottom: 2px; }
+  .nav-section-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 22px 6px;
+    cursor: pointer; user-select: none;
+  }
+  .nav-section-label {
+    font-size: 10px; color: var(--text-dim);
+    letter-spacing: 2px; font-weight: 500;
+  }
+  .nav-section-arrow {
+    font-size: 8px; color: var(--text-dim);
+    transition: transform 0.2s;
+  }
+  .nav-section.collapsed .nav-section-arrow { transform: rotate(-90deg); }
+  .nav-section-items { overflow: hidden; transition: max-height 0.25s ease; }
+  .nav-section.collapsed .nav-section-items { max-height: 0 !important; }
+
+  .nav-link {
+    display: block;
+    padding: 5px 22px 5px 28px;
+    font-size: 13px; color: var(--text-dim);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-link:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.02);
+  }
+  .nav-link.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .nav-link.search-hidden { display: none; }
+
+  /* ===== Main Content ===== */
+  main {
+    margin-left: 230px;
+    display: flex;
+    justify-content: center;
+    padding: 0 40px;
+  }
+  .content {
+    max-width: 700px;
+    width: 100%;
+    padding: 56px 0 140px;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    margin-bottom: 56px;
+    padding-bottom: 44px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 30px; font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+  .hero .epigraph {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 2.1;
+    font-style: italic;
+  }
+
+  /* ===== Sections ===== */
+  .section {
+    margin-bottom: 20px;
+    scroll-margin-top: 40px;
+  }
+  .section-header {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 6px;
+  }
+  .section h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 21px; font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 2px;
+  }
+  .section .tag {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    opacity: 0.6;
+  }
+  .section .subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .section p {
+    margin-bottom: 18px;
+    text-align: justify;
+    line-height: 1.9;
+  }
+  .section p:last-child { margin-bottom: 0; }
+
+  /* ===== Divider ===== */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 44px 0;
+  }
+
+  /* ===== Callout ===== */
+  .callout {
+    border-left: 2px solid var(--accent-dim);
+    padding: 14px 22px;
+    margin: 22px 0;
+    background: var(--accent-bg);
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.85;
+    font-style: italic;
+  }
+
+  /* ===== Relations list ===== */
+  .relations {
+    margin-top: 20px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .rel {
+    font-size: 11px;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-decoration: none;
+    background: rgba(255,255,255,0.01);
+    transition: all 0.2s;
+  }
+  .rel:hover {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+  }
+
+  /* ===== Visual break ===== */
+  .visual-break {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--border-light);
+    font-size: 14px;
+    letter-spacing: 12px;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 0 20px; }
+    .content { padding: 36px 0 80px; }
+  }
+
+  /* ===== Scrollbar ===== */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Side Navigation -->
+<nav>
+  <div class="nav-header">
+    <div class="nav-title">堕肉之歌</div>
+    <div class="nav-subtitle">世界观设定集</div>
+  </div>
+
+  <div class="nav-search">
+    <input type="text" id="search-input" placeholder="搜索词条..." oninput="filterNav(this.value)">
+  </div>
+
+  <div class="nav-pages">
+    <a class="nav-page-tab current" href="世界观图谱.html">世界设定</a>
+    <a class="nav-page-tab" href="灰烬秘塔.html">灰烬秘塔</a>
+    <a class="nav-page-tab" href="至构联邦.html">至构联邦</a>
+    <a class="nav-page-tab" href="灵肉圣所.html">灵肉圣所</a>
+  </div>
+
+  <div class="nav-section" id="nav-origin">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-origin')">
+      <span class="nav-section-label">起源</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#order" data-name="秩序">秩序</a>
+      <a class="nav-link" href="#gods" data-name="神明">神明</a>
+      <a class="nav-link" href="#rule-complex" data-name="规则复合体">规则复合体</a>
+    </div>
+  </div>
+
+  <div class="nav-section" id="nav-structure">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-structure')">
+      <span class="nav-section-label">构造</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#fishbowl" data-name="鱼缸">鱼缸</a>
+      <a class="nav-link" href="#inner-layer" data-name="内层">内层</a>
+      <a class="nav-link" href="#interlayer" data-name="夹层">夹层</a>
+      <a class="nav-link" href="#outer-boundary" data-name="外层边界">外层边界</a>
+    </div>
+  </div>
+
+  <div class="nav-section" id="nav-life">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-life')">
+      <span class="nav-section-label">文明</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#civilizations" data-name="内层文明">内层文明</a>
+      <a class="nav-link" href="至构联邦.html#power" data-name="科技之道">科技之道</a>
+      <a class="nav-link" href="灰烬秘塔.html#ash-power" data-name="魔法之道">魔法之道</a>
+    </div>
+  </div>
+
+  <div class="nav-section" id="nav-abyss">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-abyss')">
+      <span class="nav-section-label">深渊</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#chaos-universe" data-name="混乱宇宙">混乱宇宙</a>
+      <a class="nav-link" href="#chaos-gods" data-name="混乱邪神">混乱邪神</a>
+    </div>
+  </div>
+
+  <div class="nav-section" id="nav-conflict">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-conflict')">
+      <span class="nav-section-label">冲突</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#corruption" data-name="污染渗透">污染渗透</a>
+      <a class="nav-link" href="#great-war" data-name="宇宙战争">宇宙战争</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main>
+<div class="content">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>堕肉之歌</h1>
+    <div class="epigraph">
+      在万象尚未分名、群星尚未悬于高天之前，<br>
+      最先自无垠中升起的，不是光，不是火，不是生命的第一声啼哭。<br>
+      最先诞生于宇宙深处的，乃是——秩序。
+    </div>
+  </div>
+
+  <!-- 秩序 -->
+  <div class="section" id="order">
+    <div class="section-header">
+      <h2>秩序</h2>
+      <span class="tag">起源</span>
+    </div>
+    <div class="subtitle">万物之始</div>
+    <p>它们无名，无相，无始，无终。不是血肉所铸之身，亦非后世祭坛与史诗中那等会悲悯、会震怒、会垂怜的神。它们更接近于法则本身，是时间之所以流，空间之所以开，因果之所以相衔，万有之所以能够存在的根源显现。</p>
+    <p>后来的众生不能理解这样的存在，便只能以最古老、也最接近敬畏的称呼，唤它们为——神明。</p>
+    <div class="relations">
+      <a class="rel" href="#gods">→ 显现为：神明</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 神明 -->
+  <div class="section" id="gods">
+    <div class="section-header">
+      <h2>神明</h2>
+      <span class="tag">起源</span>
+    </div>
+    <div class="subtitle">法则的显现</div>
+    <p>神明并非全知。它们知晓自己肩负着某种职责，却不知那职责最初由谁授予；它们知晓自己握有伟力，却不知伟力为何而生；它们知晓自己各自趋向某一类秩序，却始终看不见秩序尽头真正的边界。</p>
+    <p>于是，在不可计数的岁月里，它们于沉默中彼此印证，于永恒中不断试验，探入法则更深之处，既观宇宙，也观自身。而每一次试验，都会留下痕迹。</p>
+    <p>它们造这一切，并非出于慈悲，亦非为了统御。它们所欲为之的，乃是一场大到足以容纳无数世界、久到足以横跨无数纪元的实验。它们想知道，秩序如何诞生，如何延续，又将如何走向终末。</p>
+    <div class="callout">它们的真正职责，从来不是抽象地守护某种完美无瑕的秩序——而是阻止宇宙坠向崩坏。</div>
+    <div class="relations">
+      <a class="rel" href="#order">← 源自：秩序</a>
+      <a class="rel" href="#rule-complex">→ 实验产生：规则复合体</a>
+      <a class="rel" href="#fishbowl">→ 创造：鱼缸</a>
+      <a class="rel" href="#great-war">→ 参战：宇宙战争</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 规则复合体 -->
+  <div class="section" id="rule-complex">
+    <div class="section-header">
+      <h2>规则复合体</h2>
+      <span class="tag">起源</span>
+    </div>
+    <div class="subtitle">试验的残片</div>
+    <p>规则与规则相触，相嵌，相斥，相融；有些结合纯净而安定，有些结合却生出扭曲与错位。于是，无数不属于正常秩序之物诞生了。它们有的怪诞，有的危险，有的超出理性所能承受的边界。它们不是单一的法则，而是数重秩序在错误重叠之中孕出的异质残片。</p>
+    <p>这些复合体多半残缺、不稳，也不真正归属于任何一条纯粹的秩序之路。神明没有将它们留在正常宇宙之中，而是将其隔离、封缄、观测，如同将尚未熄灭的余烬置于不可触碰的圣匣之中。</p>
+    <div class="callout">规则复合体本身，便是秩序内部最不纯粹、最不稳固，也最接近失序之物。当外部混乱逼近时，最先发生共鸣的，恰恰是它们。</div>
+    <div class="relations">
+      <a class="rel" href="#gods">← 实验产生：神明</a>
+      <a class="rel" href="#interlayer">→ 封印于：夹层</a>
+      <a class="rel" href="#chaos-gods">← 共鸣唤醒：混乱邪神</a>
+    </div>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <!-- 鱼缸 -->
+  <div class="section" id="fishbowl">
+    <div class="section-header">
+      <h2>鱼缸</h2>
+      <span class="tag">构造</span>
+    </div>
+    <div class="subtitle">实验之界</div>
+    <p>诸神以自身所处的真实宇宙为原型，筑起一座封闭的实验之界；在其中重新铺陈法则，播撒生命，推演文明，并将无数纪元、无数世界、无数可能，一并纳入这场漫长而宏大的求索之中。</p>
+    <p>于是，宏大的边界被建立。那边界并非墙，也非门，而是一重将世界与世界、真相与深渊、存续与崩坏彼此划开的伟大界限。后世有少数文明在支离破碎的神话中，曾以一个粗糙却贴近真相的比喻称呼它——鱼缸。</p>
+    <p>然而，这座鱼缸并非单层。它有两重天地。</p>
+    <div class="relations">
+      <a class="rel" href="#gods">← 创造者：神明</a>
+      <a class="rel" href="#inner-layer">→ 包含：内层</a>
+      <a class="rel" href="#interlayer">→ 包含：夹层</a>
+      <a class="rel" href="#outer-boundary">→ 包含：外层边界</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 内层 -->
+  <div class="section" id="inner-layer">
+    <div class="section-header">
+      <h2>内层</h2>
+      <span class="tag">构造</span>
+    </div>
+    <div class="subtitle">万族栖居之地</div>
+    <p>最深之处，是内层。那是无数世界被安放之地。在那里，神明重新铺设宇宙的根基：令时间有河道可循，令空间有疆域可分，令因果彼此牵连，令存在获得重量与意义。</p>
+    <p>而在这共同的基石之上，不同区域、不同星辰、不同世界，又因底层参数的差异，而显现出截然不同的法则面貌。有的世界更易承载灵魂，有的世界更易唤起元素；有的偏向意志之显现，有的容许概念投下真实的影。于是，生命在其间诞生，文明在其间生长，群星之下，万族各循其道。</p>
+    <div class="relations">
+      <a class="rel" href="#fishbowl">← 属于：鱼缸</a>
+      <a class="rel" href="#civilizations">→ 孕育：内层文明</a>
+      <a class="rel" href="#corruption">← 渗透：污染</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 夹层 -->
+  <div class="section" id="interlayer">
+    <div class="section-header">
+      <h2>夹层</h2>
+      <span class="tag">构造</span>
+    </div>
+    <div class="subtitle">封印之地 · 缓冲之域</div>
+    <p>在内层之外、外层边界之内，尚有一片浩瀚而凶险的夹层。那里不是正常世界，却也未真正坠入混乱深渊。那是诸神用以封印、容纳、隔绝规则复合体的过渡领域。无数试验遗下的残片，无数畸变的法则，无数未完成的构造，无数彼此冲突的神性余烬，皆被放逐于彼。</p>
+    <p>夹层既是封印之地，也是缓冲之地；既是诸神沉默的坟场，也是秘密尚未熄灭的圣域。它将一切不容于正常秩序之物阻于内层之外，又承担着整个实验宇宙最危险、最神秘的一环。</p>
+    <p>对于内层众生而言，夹层既是禁忌，也是圣地。那里散落着远古遗迹、异常圣物、失落法则，以及通向更高真理的碎片。许多种族将步入夹层视为朝圣、试炼、飞升，或逐神之路；许多王朝与学派在那里寻找力量、答案、命运与超越。而这一切，并非僭越——这是神明所默许之事。</p>
+    <div class="relations">
+      <a class="rel" href="#fishbowl">← 属于：鱼缸</a>
+      <a class="rel" href="#rule-complex">→ 封印：规则复合体</a>
+      <a class="rel" href="#civilizations">← 朝圣试炼：内层文明</a>
+      <a class="rel" href="#chaos-gods">← 入侵：混乱邪神</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 外层边界 -->
+  <div class="section" id="outer-boundary">
+    <div class="section-header">
+      <h2>外层边界</h2>
+      <span class="tag">构造</span>
+    </div>
+    <div class="subtitle">最后的屏障</div>
+    <p>外层边界是整个实验宇宙的最外围屏障，将鱼缸内的一切秩序与外部的混乱深渊隔绝。它并非墙，也非门，而是一重以法则本身铸就的伟大界限。</p>
+    <p>若外层破碎，则夹层沦陷；若夹层沦陷，则内层诸界将被逐一开启。外层边界承受着无序最持久、最猛烈的撞击。</p>
+    <div class="relations">
+      <a class="rel" href="#fishbowl">← 属于：鱼缸</a>
+      <a class="rel" href="#chaos-gods">← 撞击：混乱邪神</a>
+    </div>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <!-- 内层文明 -->
+  <div class="section" id="civilizations">
+    <div class="section-header">
+      <h2>内层文明</h2>
+      <span class="tag">文明</span>
+    </div>
+    <div class="subtitle">万族各循其道</div>
+    <p>纪元如潮，一重又一重地退去。内层诸界相继苏醒，文明于群星之间蔓延如林。不同的世界因底层参数的差异，孕育出截然不同的文明形态。有些文明走上了科技之道，有些文明走上了魔法之道。两者并非敌对，也并非彼此否定的真理——它们不过是生命理解世界、回应法则的两种方式。</p>
+    <p>许多文明仍以为灾祸只是某场天灾、神罚，或时代更迭的浩劫；却少有人知道，他们脚下的历史，头顶的群星，远方的诸界，与神话中不可言说的禁地，早已被卷入一场关乎宇宙存亡的战争之中。</p>
+    <div class="relations">
+      <a class="rel" href="#inner-layer">← 孕育于：内层</a>
+      <a class="rel" href="至构联邦.html#power">→ 发展路径：科技之道</a>
+      <a class="rel" href="灰烬秘塔.html#ash-power">→ 发展路径：魔法之道</a>
+      <a class="rel" href="#interlayer">→ 朝圣试炼：夹层</a>
+    </div>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <!-- 混乱宇宙 -->
+  <div class="section" id="chaos-universe">
+    <div class="section-header">
+      <h2>混乱宇宙</h2>
+      <span class="tag">深渊</span>
+    </div>
+    <div class="subtitle">秩序的尸骸</div>
+    <p>在更遥远、更古老，也更可怖的层面上，还存在着另一类宇宙。它并非自始便与秩序对立，而是秩序宇宙崩坏之后留下的尸骸。</p>
+    <p>当一个宇宙再也无力维持自身法则，当时间失去流向，空间失去界限，因果失去束缚，存在本身在无序中彼此覆盖、彼此吞噬，秩序便会在崩塌中腐烂。而那腐烂之后所剩下的，便是——混乱宇宙。</p>
+    <p>混乱宇宙并不是正常世界的反面。它是正常世界死去之后，仍在抽搐、膨胀、腐败的遗骸。它没有稳定结构，没有可存留的规律，没有真正的边界。它只会无序地吞噬、扩散、同化周围的一切，令万物失去差异，令众生失去自我，令所有道路最终被抹平成同一种混沌。</p>
+    <div class="relations">
+      <a class="rel" href="#chaos-gods">→ 孕生：混乱邪神</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 混乱邪神 -->
+  <div class="section" id="chaos-gods">
+    <div class="section-header">
+      <h2>混乱邪神</h2>
+      <span class="tag">深渊</span>
+    </div>
+    <div class="subtitle">崩坏法则的畸变意志</div>
+    <p>在混乱宇宙的尸骸之中，会孕生更加恐怖的存在。它们并非真正的神。它们是崩坏法则遗下的残骸，是失控规则在无尽扭结、增殖与腐败中形成的畸变意志。它们没有完整形体，没有安定自我，也不理解创造、维持与共存。它们所知晓的，只有吞噬、同化、覆盖与扩张。</p>
+    <p>当漫长岁月之外的混乱渐渐逼近这座实验宇宙时，最先发生共鸣的，并不是内层那些完整的世界，而恰恰是夹层中沉睡的规则复合体。它们开始苏醒，开始回应，开始成为裂缝——化作外部邪神探入鱼缸的触须、眼睛与门扉。</p>
+    <div class="relations">
+      <a class="rel" href="#chaos-universe">← 孕生于：混乱宇宙</a>
+      <a class="rel" href="#rule-complex">→ 共鸣唤醒：规则复合体</a>
+      <a class="rel" href="#outer-boundary">→ 撞击：外层边界</a>
+      <a class="rel" href="#interlayer">→ 入侵：夹层</a>
+      <a class="rel" href="#great-war">→ 参战：宇宙战争</a>
+    </div>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <!-- 污染渗透 -->
+  <div class="section" id="corruption">
+    <div class="section-header">
+      <h2>污染渗透</h2>
+      <span class="tag">冲突</span>
+    </div>
+    <div class="subtitle">无法隔绝的侵蚀</div>
+    <p>污染终究无法被完全隔绝。当边界震荡，当夹层破损，当规则复合体被强行撬开，来自混乱的碎片、回响与污秽，便不可避免地渗入鱼缸之内，落进那些原本稳定运转的世界。</p>
+    <p>于是，有的星球诞生出无法解释的畸变生命；有的王朝在梦里听见不属于此界的低语；有的法师召来的不再只是元素与概念；有的学者在公式尽头窥见会反过来吞噬理性的深渊。</p>
+    <div class="callout">混乱并非一次性降临。它先是渗漏，继而扎根，最终才试图开启真正的大门。</div>
+    <div class="relations">
+      <a class="rel" href="#chaos-gods">← 引发：混乱邪神</a>
+      <a class="rel" href="#inner-layer">→ 渗透：内层</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 宇宙战争 -->
+  <div class="section" id="great-war">
+    <div class="section-header">
+      <h2>宇宙战争</h2>
+      <span class="tag">冲突</span>
+    </div>
+    <div class="subtitle">秩序与混乱的终极对决</div>
+    <p>自宇宙初生以来最古老的战争，终于开始。一边，是被塑造、被维系、被无数文明栖居其上的秩序宇宙；另一边，是由崩坏世界堆叠而成的混乱深渊，以及自那些宇宙尸骸中孕出的邪神。</p>
+    <p>外层边界承受无序的撞击，夹层成为率先燃起战火的封印战场，内层诸界则在毫无察觉之时，迎来灾厄最初的影。</p>
+    <div class="callout">若实验中断，若边界崩裂，若内层与夹层一同滑入失序，那么神明所追寻的一切，都将与宇宙一道腐烂。</div>
+    <div class="relations">
+      <a class="rel" href="#gods">← 秩序一方：神明</a>
+      <a class="rel" href="#chaos-gods">← 混乱一方：混乱邪神</a>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script>
+// Scroll spy
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => link.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// Collapsible nav sections
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+// Search
+function filterNav(query) {
+  const q = query.trim().toLowerCase();
+  navLinks.forEach(link => {
+    const name = (link.dataset.name || link.textContent).toLowerCase();
+    link.classList.toggle('search-hidden', q !== '' && !name.includes(q));
+  });
+  // expand all sections when searching
+  document.querySelectorAll('.nav-section').forEach(s => {
+    if (q) s.classList.remove('collapsed');
+  });
+}
+</script>
+
+</body>
+</html>

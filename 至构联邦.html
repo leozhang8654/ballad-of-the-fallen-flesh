@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>堕肉之歌 — 至构联邦</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0c0c11; --bg-nav: #0f0f17; --bg-card: #15151f;
+    --border: #1e1e30; --border-light: #2a2a40;
+    --text: #c0c0d0; --text-body: #b0b0c4; --text-dim: #606078; --text-bright: #e4e4ee;
+    --accent: #4a8adf; --accent-dim: #2a4a70; --accent-bg: rgba(74,138,223,0.06);
+    --faction: #3a9adf; --faction-dim: #1a5a90; --faction-bg: rgba(58,154,223,0.06);
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text-body); font-family: 'Noto Sans SC', sans-serif; line-height: 1.85; font-size: 15px; }
+  nav { position: fixed; top: 0; left: 0; bottom: 0; width: 230px; background: var(--bg-nav); border-right: 1px solid var(--border); padding: 28px 0 40px; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+  nav::-webkit-scrollbar { width: 3px; } nav::-webkit-scrollbar-track { background: transparent; } nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .nav-header { padding: 0 22px; margin-bottom: 20px; }
+  .nav-title { font-family: 'Noto Serif SC', serif; font-size: 16px; font-weight: 700; color: var(--text-bright); letter-spacing: 3px; margin-bottom: 4px; }
+  .nav-subtitle { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+  .nav-search { padding: 0 16px; margin-bottom: 16px; }
+  .nav-search input { width: 100%; padding: 7px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; font-family: 'Noto Sans SC', sans-serif; outline: none; transition: border-color 0.2s; }
+  .nav-search input::placeholder { color: var(--text-dim); } .nav-search input:focus { border-color: var(--faction-dim); }
+  .nav-pages { padding: 0 12px; margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .nav-page-tab { padding: 6px 0; text-align: center; font-size: 10px; color: var(--text-dim); border: 1px solid var(--border); border-radius: 5px; text-decoration: none; transition: all 0.2s; letter-spacing: 0.5px; }
+  .nav-page-tab:hover { color: var(--text); border-color: var(--border-light); }
+  .nav-page-tab.current { color: var(--faction); border-color: var(--faction-dim); background: var(--faction-bg); }
+  .nav-section { margin-bottom: 2px; }
+  .nav-section-toggle { display: flex; align-items: center; justify-content: space-between; padding: 10px 22px 6px; cursor: pointer; user-select: none; }
+  .nav-section-label { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; font-weight: 500; }
+  .nav-section-arrow { font-size: 8px; color: var(--text-dim); transition: transform 0.2s; }
+  .nav-section.collapsed .nav-section-arrow { transform: rotate(-90deg); }
+  .nav-section-items { overflow: hidden; transition: max-height 0.25s ease; }
+  .nav-section.collapsed .nav-section-items { max-height: 0 !important; }
+  .nav-link { display: block; padding: 5px 22px 5px 28px; font-size: 13px; color: var(--text-dim); text-decoration: none; border-left: 2px solid transparent; transition: all 0.15s; }
+  .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+  .nav-link.active { color: var(--faction); border-left-color: var(--faction); background: var(--faction-bg); }
+  .nav-link.search-hidden { display: none; }
+  main { margin-left: 230px; display: flex; justify-content: center; padding: 0 40px; }
+  .content { max-width: 700px; width: 100%; padding: 56px 0 140px; }
+  .hero { margin-bottom: 56px; padding-bottom: 44px; border-bottom: 1px solid var(--border); }
+  .hero .faction-label { font-size: 11px; color: var(--faction); letter-spacing: 2px; margin-bottom: 10px; opacity: 0.7; }
+  .hero h1 { font-family: 'Noto Serif SC', serif; font-size: 30px; font-weight: 700; color: var(--text-bright); letter-spacing: 4px; margin-bottom: 10px; }
+  .hero .motto { font-family: 'Noto Serif SC', serif; font-size: 15px; color: var(--text-dim); font-style: italic; margin-bottom: 20px; }
+  .hero .summary { font-size: 14px; color: var(--text-dim); line-height: 1.9; }
+  .section { margin-bottom: 20px; scroll-margin-top: 40px; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .section h2 { font-family: 'Noto Serif SC', serif; font-size: 21px; font-weight: 700; color: var(--text-bright); letter-spacing: 2px; }
+  .section .tag { font-size: 11px; color: var(--faction); letter-spacing: 1px; opacity: 0.6; }
+  .section .subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; font-style: italic; }
+  .section p { margin-bottom: 18px; text-align: justify; line-height: 1.9; }
+  .section p:last-child { margin-bottom: 0; }
+  .section p strong { color: var(--text); font-weight: 500; }
+  .divider { height: 1px; background: var(--border); margin: 44px 0; }
+  .callout { border-left: 2px solid var(--faction-dim); padding: 14px 22px; margin: 22px 0; background: var(--faction-bg); border-radius: 0 6px 6px 0; font-size: 14px; color: var(--text-dim); line-height: 1.85; font-style: italic; }
+  .relations { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .rel { font-size: 11px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 12px; color: var(--text-dim); cursor: pointer; text-decoration: none; background: rgba(255,255,255,0.01); transition: all 0.2s; }
+  .rel:hover { border-color: var(--faction-dim); color: var(--faction); background: rgba(58,154,223,0.1); transform: translateY(-1px); }
+  .visual-break { text-align: center; margin: 48px 0; color: var(--border-light); font-size: 14px; letter-spacing: 12px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+  .info-item { padding: 12px 16px; background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 6px; }
+  .info-label { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 4px; }
+  .info-value { font-size: 13px; color: var(--text); }
+  .illust { width: 100%; border-radius: 8px; border: 1px solid var(--border); margin: 24px 0; display: block; opacity: 0.92; transition: opacity 0.3s; }
+  .illust:hover { opacity: 1; }
+  .illust-caption { text-align: center; font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin: -16px 0 24px; }
+  .hero-illust { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 24px 0 0; display: block; opacity: 0.88; }
+  @media (max-width: 900px) { nav { display: none; } main { margin-left: 0; padding: 0 20px; } .content { padding: 36px 0 80px; } .info-grid { grid-template-columns: 1fr; } }
+  ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-header">
+    <div class="nav-title">堕肉之歌</div>
+    <div class="nav-subtitle">至构联邦 · 阵营设定</div>
+  </div>
+  <div class="nav-search"><input type="text" id="search-input" placeholder="搜索词条..." oninput="filterNav(this.value)"></div>
+  <div class="nav-pages">
+    <a class="nav-page-tab" href="世界观图谱.html">世界设定</a>
+    <a class="nav-page-tab" href="灰烬秘塔.html">灰烬秘塔</a>
+    <a class="nav-page-tab current" href="至构联邦.html">至构联邦</a>
+    <a class="nav-page-tab" href="灵肉圣所.html">灵肉圣所</a>
+  </div>
+  <div class="nav-section" id="nav-overview">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-overview')"><span class="nav-section-label">总览</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#overview" data-name="阵营总览 至构联邦">阵营总览</a>
+      <a class="nav-link" href="#history" data-name="起源与命名">起源与命名</a>
+    </div>
+  </div>
+  <div class="nav-section" id="nav-city">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-city')"><span class="nav-section-label">寰构天环</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#city" data-name="寰构天环 主城">主城概述</a>
+      <a class="nav-link" href="#structure" data-name="城市结构">城市结构</a>
+    </div>
+  </div>
+  <div class="nav-section" id="nav-system">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-system')"><span class="nav-section-label">体系</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#power" data-name="力量体系">力量体系</a>
+      <a class="nav-link" href="#growth" data-name="升级路线 资源">升级路线与资源</a>
+      <a class="nav-link" href="#org" data-name="组织结构">组织结构</a>
+    </div>
+  </div>
+  <div class="nav-section" id="nav-culture">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-culture')"><span class="nav-section-label">气质与立场</span><span class="nav-section-arrow">▼</span></div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#stance" data-name="阵营气质">阵营气质</a>
+      <a class="nav-link" href="#views" data-name="对外立场">对外立场</a>
+      <a class="nav-link" href="#interlayer-view" data-name="夹层观">夹层观</a>
+    </div>
+  </div>
+</nav>
+<main><div class="content">
+  <div class="hero">
+    <div class="faction-label">阵营 · 科学侧</div>
+    <h1>至构联邦</h1>
+    <div class="motto">「凡可解析者，皆可重构。」</div>
+    <div class="summary">鱼缸宇宙三大路线之一的科学侧阵营。代表着以解析、制造与工程构筑接近世界本质的文明道路。以工程与量产构筑文明未来的宇宙级技术共同体。</div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">路线定位</div><div class="info-value">科学侧</div></div>
+      <div class="info-item"><div class="info-label">主城</div><div class="info-value">寰构天环</div></div>
+      <div class="info-item"><div class="info-label">核心理念</div><div class="info-value">凡可解析者，皆可重构</div></div>
+      <div class="info-item"><div class="info-label">阵营象征</div><div class="info-value">嵌着发光核心的分层钢铁环</div></div>
+    </div>
+    <img class="hero-illust" src="%E8%87%B3%E6%9E%84%E8%81%94%E9%82%A6%201.jpg" alt="寰构天环远景——环绕天体的巨型星环">
+  </div>
+
+  <div class="section" id="overview">
+    <div class="section-header"><h2>阵营总览</h2><span class="tag">总览</span></div>
+    <div class="subtitle">宇宙级构筑文明</div>
+    <p>至构联邦不是单纯"会造机器的人"的集合，而是一整条文明道路——通过解析、验证、制造、迭代与量产，将宇宙法则转化为可被掌控的技术体系。</p>
+    <p>至构联邦相信，宇宙的一切现象，无论是元素、灵魂、法则波动、空间异常，还是夹层中的遗物与灾变，本质上都不是不可触碰的神秘。它们都可以被观测、拆解、建模、重组、利用、工程化、武器化。在他们看来，所谓"奇迹"，只不过是尚未被完全理解的高阶现象；所谓"神迹"，也不过是尚未被复制的系统级技术。</p>
+    <p>他们认为，文明真正的强大，不在于偶然诞生出几位伟大的个体，而在于能否把力量转化为稳定的结构、可复制的流程、可扩张的体系、可量产的成果。</p>
+    <div class="callout">凡可解析者，皆可重构。——至构联邦核心信条</div>
+    <div class="relations">
+      <a class="rel" href="世界观图谱.html#science">← 属于：科技之道</a>
+      <a class="rel" href="#city">→ 主城：寰构天环</a>
+      <a class="rel" href="世界观图谱.html#interlayer">→ 探索：夹层</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="history">
+    <div class="section-header"><h2>起源与命名</h2><span class="tag">总览</span></div>
+    <div class="subtitle">构筑本身，就是文明最接近神明的行为</div>
+    <p>"至构"并不是单纯指制造能力强，而是指他们相信：构筑本身，就是文明最接近神明的行为。真正伟大的文明不是等待世界赐予条件，而是主动重塑条件。他们不满足于居住在世界之中，他们要重构世界的外壳、秩序、交通、战争方式、生产方式，乃至于文明延续本身的框架。</p>
+    <p>"联邦"则说明他们并非单一国度，而是由多个世界、殖民环带、工业城邦、技术共同体与工程军政体联合而成的超大型文明结构。</p>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <div class="section" id="city">
+    <div class="section-header"><h2>寰构天环</h2><span class="tag">主城</span></div>
+    <div class="subtitle">横贯宇宙的钢铁秩序之轮</div>
+    <p>寰构天环是至构联邦的主城，也是整个科学阵营最核心的首都巨构。它不是建立在行星表面的城市，而是一道环绕天体运行的巨大星环。无数工业模块、舰港、居住带、能源炉、轨道设施与运算中枢被铸造成一整圈环形世界，横跨真空与轨道，昼夜不停地运转。</p>
+    <p>寰构天环既是主城、首都、工业母体、研究中枢，也是战争堡垒、舰队母港和跨世界资源调度核心。它不是"围绕工业建立的城市"，而是直接把工业、行政、战争、运输与生存本身铸成城市。</p>
+    <p>视觉上，寰构天环呈现为：一道庞大到几乎看不见全貌的星环横贯天穹，外壁布满工业纹路、轨道设施与灯火洪流，舰船与运输列车在不同环层间高速穿行。外部船坞与巨型机械臂在真空中持续作业，环内分布着透明穹顶居住区与层叠城市模块，核心区持续闪烁冷白与幽蓝的能量脉冲。</p>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">主色</div><div class="info-value">银灰 · 黑铁 · 冷白 · 冰蓝</div></div>
+      <div class="info-item"><div class="info-label">点缀色</div><div class="info-value">警示橙 · 熔炉赤金 · 电弧蓝</div></div>
+    </div>
+    <img class="illust" src="unnamed%20%281%29.jpg" alt="联邦主枢——中央核心塔与光轨运输网">
+    <div class="illust-caption">联邦主枢 · 寰构天环内景</div>
+    <div class="callout">整体气质——精密、宏大、冷静、压迫、秩序化、工业化、带着文明级工程的绝对力量感。</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="structure">
+    <div class="section-header"><h2>城市结构</h2><span class="tag">寰构天环</span></div>
+    <div class="subtitle">从中枢到外环的六层巨构</div>
+    <p><strong>一、联邦主枢</strong></p>
+    <p>整座星环的绝对中控核心，负责联邦最高议会、行政与军工调度、跨区域交通管理、远征权限下达、战略兵器控制与资源生产总协调。它是整个至构联邦的大脑，也是寰构天环真正意义上的"中枢神经"。</p>
+    <p><strong>二、工造环带</strong></p>
+    <p>寰构天环最具代表性的区域。无数工厂、装配线、精炼炉、模块工坊与测试平台沿着环带展开，持续生产武器、装甲、外骨骼、机械义体、运输装置、战争机械、采集设备与舰体构件。这里不是"工业区"，而是一个正在不停产出未来的世界工厂。</p>
+    <p><strong>三、舰港与船坞区</strong></p>
+    <p>分布巨型外部船坞与舰港带，承担轨道舰船建造、远征平台维护、工程母舰装配、武装舰队停泊，以及夹层开拓部队出发与回收。机械臂、发射井、停泊架与浮空舰体共同构成了寰构天环最有压迫感的天际线之一。</p>
+    <p><strong>四、居住与商业环带</strong></p>
+    <p>环带内层包含公民居住区、技术学院、工程人员社区、商贸节点、生态维生区、训练设施和公共运输网络。透明穹顶、立体街区、悬浮轨道列车与冷白灯火，共同构成了巨型星环内部的生活景观。</p>
+    <p><strong>五、星炉心核</strong></p>
+    <p>整座寰构天环最重要的能源命脉。一套将高能资源、宇宙现象甚至部分异常法则现象转化为稳定能源输出的超级系统。整个星环的工业运转、武器系统、运输网络、生态维生与战略防御，都依赖于星炉心核的持续跳动。</p>
+    <p><strong>六、外环防御带</strong></p>
+    <p>外环遍布轨道炮阵列、护盾投射塔、无人战机巢港、异常压制装置、防空与拦截平台，以及对夹层裂隙的封锁炮门。一旦进入战争状态，整座寰构天环就不再只是首都，而会变成一枚横在宇宙中的巨型钢铁武器。</p>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <div class="section" id="power">
+    <div class="section-header"><h2>力量体系</h2><span class="tag">体系</span></div>
+    <div class="subtitle">对本底律稳定部分的提取、固化与工程复制</div>
+    <p>至构联邦的力量并不来自与规则的"对话"，而是来自把规则变成"结构"。他们不依赖个人意志去借取法则，而是通过测量、建模、校准、重复实验、工程封装与系统放大，将本来只有少数人能触碰的规则现象，变成人人都能用、机器都能跑、军团都能配发的工业体系。</p>
+    <p>魔法师靠自身与火之表征共鸣来施展火焰术，至构联邦则研究：燃烧现象如何稳定触发、如何高能输出、如何压缩进武器模组、如何让一万台设备都复制同样的结果。魔法传送阵是借空间表征律完成跳跃，科学阵营则制造"相位轨道门"，通过庞大能量和稳定参数，强行把空间现象工程化。</p>
+    <div class="callout">科学是对本底律稳定部分的提取、固化与工程复制。它只信那些可以被稳定提纯、反复运行、脱离个人天赋后仍然成立的规则段。——科学的本质定义</div>
+    <p>所以科学并非"不碰规则"，而是接触可被测量和固化的规则底层。手段是参数、结构、能量、材料、算法与装置，核心是拆解与复制。力量表现形式包括：枪械、重火器、外骨骼、机甲、无人机、护盾系统、战术平台、轨道打击、工程兵器、环境构筑装置与高能矿物驱动设备。</p>
+    <img class="illust" src="bd0b8893-d17e-4942-8c00-1a448627ee28.png" alt="工造环带——熔炉、装配线与工业核心">
+    <div class="illust-caption">工造环带 · 把规则做成机器</div>
+    <p><strong>战斗风格</strong></p>
+    <p>至构联邦的战斗不是最神秘的，也不是最野性的，但一定是最稳定、最直观、最具阵地推进感的路线之一。他们擅长中远距离火力压制、战术部署、工程建造、召唤机械单位、护盾与防御支援、重装推进、大型兵器使用、团队火力协同，以及载具与平台战斗。他们的强大不在于瞬间的神秘奇迹，而在于把战斗本身变成一套高度精密的系统工程。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="growth">
+    <div class="section-header"><h2>升级路线与资源</h2><span class="tag">体系</span></div>
+    <div class="subtitle">探索 → 回收技术 → 解锁蓝图 → 开采资源 → 制造装备 → 模块升级</div>
+    <p>成长循环：进入夹层探索 → 回收遗迹科技、装置残骸、结构样本 → 采集珍贵矿物与高能资源 → 解锁工程蓝图、模块树与制造分支 → 制作武器、护甲、载具、无人机与战术平台 → 优化装备链与战斗体系 → 前往更深层区域获取更高阶工业核心与异常构件。最核心的成长资源不是知识本身，而是可转化为工业成果的知识。</p>
+    <p><strong>核心资源</strong></p>
+    <p><strong>蓝图与技术档案</strong>——包括远古设计图、异常结构模型、能源调度协议、兵器框架、工程模板等，是解锁制造体系的核心。</p>
+    <p><strong>珍贵矿物与材料</strong>——包括高能晶矿、超密度合金、异界导体、相位纤维、热核燃材等，用于制造装备、战舰、护甲与核心系统。</p>
+    <p><strong>工业组件与核心模组</strong>——包括引擎核心、运算模块、火控系统、护盾发生器、动力骨架、无人机脑核等，决定装备系统的上限与稳定性。</p>
+    <div class="callout">真正伟大的文明不是适应世界，而是主动重构世界。</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="org">
+    <div class="section-header"><h2>组织结构</h2><span class="tag">体系</span></div>
+    <div class="subtitle">从至构议会到远征前线</div>
+    <p><strong>至构议会</strong>——最高层，负责联邦总路线、工业统筹、远征权限与重大战略决策。</p>
+    <p><strong>首构执政官</strong>——联邦最高领袖。</p>
+    <p><strong>工造部门</strong>——负责制造体系、武装研发、资源精炼与工业链运转。</p>
+    <p><strong>演算部门</strong>——负责建模、数据推演、异常测绘与战略调度。</p>
+    <p><strong>远征部门</strong>——负责夹层勘探、资源回收、遗迹拆解与对外开拓。</p>
+    <p><strong>防务部门</strong>——负责舰队、环防、重装军团与战争平台调度。</p>
+    <p><strong>公民与殖民部门</strong>——负责居住区、补给、生态维生、对外殖民与边疆开发。</p>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <div class="section" id="stance">
+    <div class="section-header"><h2>阵营气质</h2><span class="tag">气质与立场</span></div>
+    <div class="subtitle">把理性与工业发展到极致的构筑文明</div>
+    <p>至构联邦不是混乱的发明家联盟，也不是传统意义上的蒸汽帝国。它更像一个把理性、制造、工业与秩序发展到极致的宇宙级构筑文明。他们通常显得务实、冷静、高效、严谨、自信，重视结果与验证。他们尊重奇迹，但只尊重那些能被转化为文明能力的奇迹。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="views">
+    <div class="section-header"><h2>对外立场</h2><span class="tag">气质与立场</span></div>
+    <div class="subtitle">他们如何看待另外两条路线</div>
+    <p><strong>对灰烬秘塔（魔法侧）</strong></p>
+    <p>"你们在与规则说话，我们在把规则做成机器。说话只能一次触动一个人，而机器能让一万人同时运转。"在他们看来，魔法与表征律的共鸣过于依赖天赋、认知与个人适配，而文明真正需要的是可以被稳定提纯、脱离个人天赋后仍然成立的力量体系。</p>
+    <p><strong>对灵肉圣所（生物侧）</strong></p>
+    <p>"你们把变量植入自身，把不确定性奉为进化；那不是稳定的未来，而是难以控制的风险。"在他们看来，血肉的确拥有成长性，但也拥有不可预测性。而一个不可预测的体系，不配成为文明的根基。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="interlayer-view">
+    <div class="section-header"><h2>夹层观</h2><span class="tag">气质与立场</span></div>
+    <div class="subtitle">他们眼中的夹层</div>
+    <p>对于至构联邦而言，夹层不是神秘禁区，也不是朝圣之地。夹层是资源矿脉、遗迹工场、异常实验场与未来技术的残骸堆积地。他们在夹层中看到的不是神谕，而是可提炼的材料、可逆向的装置、可建立模型的异常、可纳入工业体系的未知现象。</p>
+    <div class="callout">他们探索夹层的态度，不是敬畏，而是勘探、测绘、拆解、收编。</div>
+    <div class="relations">
+      <a class="rel" href="世界观图谱.html#interlayer">→ 世界设定：夹层</a>
+      <a class="rel" href="世界观图谱.html#rule-complex">→ 世界设定：规则复合体</a>
+    </div>
+  </div>
+</div></main>
+<script>
+const sections=document.querySelectorAll('.section'),navLinks=document.querySelectorAll('.nav-link');
+const observer=new IntersectionObserver(e=>{e.forEach(entry=>{if(entry.isIntersecting){navLinks.forEach(l=>l.classList.remove('active'));const a=document.querySelector(`.nav-link[href="#${entry.target.id}"]`);if(a)a.classList.add('active')}})},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>observer.observe(s));
+function toggleSection(id){document.getElementById(id).classList.toggle('collapsed')}
+function filterNav(q){q=q.trim().toLowerCase();navLinks.forEach(l=>{const n=(l.dataset.name||l.textContent).toLowerCase();l.classList.toggle('search-hidden',q!==''&&!n.includes(q))});document.querySelectorAll('.nav-section').forEach(s=>{if(q)s.classList.remove('collapsed')})}
+</script>
+</body>
+</html>

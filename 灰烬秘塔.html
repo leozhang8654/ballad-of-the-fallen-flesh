@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>堕肉之歌 — 灰烬秘塔</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0c0c11;
+    --bg-nav: #0f0f17;
+    --bg-card: #15151f;
+    --border: #1e1e30;
+    --border-light: #2a2a40;
+    --text: #c0c0d0;
+    --text-body: #b0b0c4;
+    --text-dim: #606078;
+    --text-bright: #e4e4ee;
+    --accent: #4a8adf;
+    --accent-dim: #2a4a70;
+    --accent-bg: rgba(74,138,223,0.06);
+    --accent-hover: rgba(74,138,223,0.12);
+    --faction: #7a6adf;
+    --faction-dim: #4a3a80;
+    --faction-bg: rgba(122,106,223,0.06);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-body);
+    font-family: 'Noto Sans SC', sans-serif;
+    line-height: 1.85;
+    font-size: 15px;
+  }
+
+  /* ===== Side Nav ===== */
+  nav {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 230px;
+    background: var(--bg-nav);
+    border-right: 1px solid var(--border);
+    padding: 28px 0 40px;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex; flex-direction: column;
+  }
+  nav::-webkit-scrollbar { width: 3px; }
+  nav::-webkit-scrollbar-track { background: transparent; }
+  nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .nav-header { padding: 0 22px; margin-bottom: 20px; }
+  .nav-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+  .nav-subtitle {
+    font-size: 11px; color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .nav-search {
+    padding: 0 16px; margin-bottom: 16px;
+  }
+  .nav-search input {
+    width: 100%; padding: 7px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: 'Noto Sans SC', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .nav-search input::placeholder { color: var(--text-dim); }
+  .nav-search input:focus { border-color: var(--faction-dim); }
+
+  .nav-pages {
+    padding: 0 12px; margin-bottom: 12px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .nav-page-tab {
+    padding: 6px 0;
+    text-align: center;
+    font-size: 10px; color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .nav-page-tab:hover { color: var(--text); border-color: var(--border-light); }
+  .nav-page-tab.current {
+    color: var(--faction);
+    border-color: var(--faction-dim);
+    background: var(--faction-bg);
+  }
+
+  .nav-section { margin-bottom: 2px; }
+  .nav-section-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 22px 6px;
+    cursor: pointer; user-select: none;
+  }
+  .nav-section-label {
+    font-size: 10px; color: var(--text-dim);
+    letter-spacing: 2px; font-weight: 500;
+  }
+  .nav-section-arrow {
+    font-size: 8px; color: var(--text-dim);
+    transition: transform 0.2s;
+  }
+  .nav-section.collapsed .nav-section-arrow { transform: rotate(-90deg); }
+  .nav-section-items { overflow: hidden; transition: max-height 0.25s ease; }
+  .nav-section.collapsed .nav-section-items { max-height: 0 !important; }
+
+  .nav-link {
+    display: block;
+    padding: 5px 22px 5px 28px;
+    font-size: 13px; color: var(--text-dim);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-link:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.02);
+  }
+  .nav-link.active {
+    color: var(--faction);
+    border-left-color: var(--faction);
+    background: var(--faction-bg);
+  }
+  .nav-link.search-hidden { display: none; }
+
+  /* ===== Main Content ===== */
+  main {
+    margin-left: 230px;
+    display: flex;
+    justify-content: center;
+    padding: 0 40px;
+  }
+  .content {
+    max-width: 700px;
+    width: 100%;
+    padding: 56px 0 140px;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    margin-bottom: 56px;
+    padding-bottom: 44px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero .faction-label {
+    font-size: 11px; color: var(--faction);
+    letter-spacing: 2px; margin-bottom: 10px;
+    opacity: 0.7;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 30px; font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+  }
+  .hero .motto {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+  .hero .summary {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.9;
+  }
+
+  /* ===== Sections ===== */
+  .section {
+    margin-bottom: 20px;
+    scroll-margin-top: 40px;
+  }
+  .section-header {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 6px;
+  }
+  .section h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 21px; font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 2px;
+  }
+  .section .tag {
+    font-size: 11px;
+    color: var(--faction);
+    letter-spacing: 1px;
+    opacity: 0.6;
+  }
+  .section .subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .section p {
+    margin-bottom: 18px;
+    text-align: justify;
+    line-height: 1.9;
+  }
+  .section p:last-child { margin-bottom: 0; }
+
+  .section p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 44px 0;
+  }
+
+  .callout {
+    border-left: 2px solid var(--faction-dim);
+    padding: 14px 22px;
+    margin: 22px 0;
+    background: var(--faction-bg);
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.85;
+    font-style: italic;
+  }
+
+  .relations {
+    margin-top: 20px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .rel {
+    font-size: 11px;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-decoration: none;
+    background: rgba(255,255,255,0.01);
+    transition: all 0.2s;
+  }
+  .rel:hover {
+    border-color: var(--faction-dim);
+    color: var(--faction);
+    background: rgba(122,106,223,0.1);
+    transform: translateY(-1px);
+  }
+
+  .visual-break {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--border-light);
+    font-size: 14px;
+    letter-spacing: 12px;
+  }
+
+  /* ===== Info grid ===== */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .info-item {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .info-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .info-value {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* ===== Illustrations ===== */
+  .illust {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 24px 0;
+    display: block;
+    opacity: 0.92;
+    transition: opacity 0.3s;
+  }
+  .illust:hover { opacity: 1; }
+  .illust-caption {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin: -16px 0 24px;
+  }
+  .hero-illust {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin: 24px 0 0;
+    display: block;
+    opacity: 0.88;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 0 20px; }
+    .content { padding: 36px 0 80px; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Side Navigation -->
+<nav>
+  <div class="nav-header">
+    <div class="nav-title">堕肉之歌</div>
+    <div class="nav-subtitle">灰烬秘塔 · 阵营设定</div>
+  </div>
+
+  <div class="nav-search">
+    <input type="text" id="search-input" placeholder="搜索词条..." oninput="filterNav(this.value)">
+  </div>
+
+  <div class="nav-pages">
+    <a class="nav-page-tab" href="世界观图谱.html">世界设定</a>
+    <a class="nav-page-tab current" href="灰烬秘塔.html">灰烬秘塔</a>
+    <a class="nav-page-tab" href="至构联邦.html">至构联邦</a>
+    <a class="nav-page-tab" href="灵肉圣所.html">灵肉圣所</a>
+  </div>
+
+  <div class="nav-section" id="nav-overview">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-overview')">
+      <span class="nav-section-label">总览</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#ash-tower" data-name="阵营总览 灰烬秘塔">阵营总览</a>
+      <a class="nav-link" href="#ash-history" data-name="起源与历史">起源与历史</a>
+    </div>
+  </div>
+
+  <div class="nav-section" id="nav-city">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-city')">
+      <span class="nav-section-label">万塔星渊</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#tower-city" data-name="万塔星渊 主城">主城概述</a>
+      <a class="nav-link" href="#tower-structure" data-name="城市结构">城市结构</a>
+    </div>
+  </div>
+
+  <div class="nav-section" id="nav-system">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-system')">
+      <span class="nav-section-label">体系</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#ash-power" data-name="力量体系">力量体系</a>
+      <a class="nav-link" href="#ash-growth" data-name="升级路线 资源">升级路线与资源</a>
+      <a class="nav-link" href="#ash-org" data-name="组织结构">组织结构</a>
+    </div>
+  </div>
+
+  <div class="nav-section" id="nav-culture">
+    <div class="nav-section-toggle" onclick="toggleSection('nav-culture')">
+      <span class="nav-section-label">气质与立场</span>
+      <span class="nav-section-arrow">▼</span>
+    </div>
+    <div class="nav-section-items">
+      <a class="nav-link" href="#ash-stance" data-name="立场与气质">阵营气质</a>
+      <a class="nav-link" href="#ash-views" data-name="对外立场">对外立场</a>
+      <a class="nav-link" href="#ash-interlayer" data-name="夹层观">夹层观</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main>
+<div class="content">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="faction-label">阵营 · 魔法侧</div>
+    <h1>灰烬秘塔</h1>
+    <div class="motto">「余烬未熄，真理长存。」</div>
+    <div class="summary">鱼缸宇宙三大路线之一的魔法侧阵营。代表着以知识、法则与秘术接近世界本质的文明道路。自文明灰烬中升起的秘法继承者，也是群星之间最执着的求知者。</div>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">路线定位</div>
+        <div class="info-value">魔法侧</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">主城</div>
+        <div class="info-value">万塔星渊</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">核心理念</div>
+        <div class="info-value">世界不是被制造的，而是被理解的</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">阵营象征</div>
+        <div class="info-value">燃着苍白余火的高塔，环以碎裂星环与秘文光轮</div>
+      </div>
+    </div>
+    <img class="hero-illust" src="Gemini_Generated_Image_9b0ksh9b0ksh9b0k.png" alt="万塔星渊远景——悬浮塔群与星环">
+  </div>
+
+  <!-- 阵营总览 -->
+  <div class="section" id="ash-tower">
+    <div class="section-header">
+      <h2>阵营总览</h2>
+      <span class="tag">总览</span>
+    </div>
+    <div class="subtitle">奥术文明共同体</div>
+    <p>灰烬秘塔不是单纯"会施法的人"的集合，而是一整条文明道路——通过知识、法则、符文、仪式与材料，理解世界，并借此驾驭力量。</p>
+    <p>灰烬秘塔相信，宇宙的深层本质并不是机械，也不是单纯的血肉进化，而是可被理解、呼唤、解释与书写的法则。在他们看来：魔法不是奇迹，而是对法则的正确触碰；符文不是装饰，而是秩序留下的语言；仪式不是迷信，而是与世界深层结构建立联系的方法；知识不是工具，而是力量本身。</p>
+    <p>所以，灰烬秘塔并不是一个普通的法师组织，而是一个横跨诸界、研究法则、保存秘典、探索夹层、掌握失落知识的奥术文明共同体。</p>
+    <div class="callout">世界不是被制造出来的，而是被理解出来的。——灰烬秘塔根本信条</div>
+    <div class="relations">
+      <a class="rel" href="世界观图谱.html#magic">← 属于：魔法之道</a>
+      <a class="rel" href="#tower-city">→ 主城：万塔星渊</a>
+      <a class="rel" href="世界观图谱.html#interlayer">→ 探索：夹层</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 起源与历史 -->
+  <div class="section" id="ash-history">
+    <div class="section-header">
+      <h2>起源与历史</h2>
+      <span class="tag">总览</span>
+    </div>
+    <div class="subtitle">从文明灰烬中升起的星海塔群</div>
+    <p>很久以前，灰烬秘塔并不漂浮于群星之间。它最初是一整个建立在古老世界上的法术文明中心，是无数学派、秘术师、占星者与炼金术士共同汇聚的知识圣地。</p>
+    <p>后来，那世界在一次与夹层有关的巨大灾变中毁灭。大地崩裂，天空燃尽，文明几乎化为灰烬。唯有诸塔在最后的奥术升举仪式中脱离地表，被强行送入星海与虚空之间。</p>
+    <p>自那之后，塔群失去了故土，只能悬浮于群星之中继续延续法脉。它们既是文明的残骸，也是知识未灭的证明。因此，后世诸界称其为——灰烬秘塔。</p>
+    <div class="callout">这个名字意味着两件事：他们来自一场未曾真正熄灭的大毁灭；他们以残存之火，守住了知识的延续。</div>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <!-- 万塔星渊 -->
+  <div class="section" id="tower-city">
+    <div class="section-header">
+      <h2>万塔星渊</h2>
+      <span class="tag">主城</span>
+    </div>
+    <div class="subtitle">悬浮于星海与虚空之间的奥术都市群</div>
+    <p>万塔星渊是灰烬秘塔的主城，也是整个魔法阵营最核心的城市群。它不是一座单独的城市，而是一整片悬浮于星海与虚空之间的塔域。无数高塔漂浮在黑暗宇宙之中，彼此以法阵、灵桥、符文轨道和传送门连接。远远望去，就像一片由高塔组成的群星，又像一簇悬在深空中的文明余烬。</p>
+    <p>万塔星渊既是主城、学术中枢、法术研究网络，也是远征调度地、秘典保管所和禁忌知识封存区。这里不像传统奇幻中的"魔法学院"，更像一个已经脱离大地、以塔为节点、以知识为血脉运转的奥术都市群。每一座塔，都可能对应着一门学派、一段失落历史、一条危险研究路线，甚至一项不该被世人轻易知晓的法则实验。</p>
+    <p>视觉上，万塔星渊呈现为：无边黑暗星海中的悬浮高塔群，塔身铭刻发光符文，塔与塔之间有半透明光桥与法阵轨道相连，塔尖燃着永不熄灭的苍白火焰。远处环绕着碎裂石块、星环残片与未完成的浮空基座。某些塔沉寂无声，某些塔则有流动的法术光河贯穿上下。</p>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">主色</div>
+        <div class="info-value">灰黑 · 深蓝 · 银白</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">点缀色</div>
+        <div class="info-value">幽紫 · 苍金 · 冷青 · 余烬橙</div>
+      </div>
+    </div>
+    <img class="illust" src="unnamed%20%283%29.jpg" alt="万塔星渊城市全貌——塔群、法阵光环与光桥">
+    <div class="illust-caption">万塔星渊 · 塔域全景</div>
+    <div class="callout">整体气质——神秘、古老、寂静、冷峻、崇高、带着末世余火般的悲壮感。</div>
+    <div class="relations">
+      <a class="rel" href="#ash-tower">← 属于：灰烬秘塔</a>
+      <a class="rel" href="#tower-structure">→ 详见：城市结构</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 城市结构 -->
+  <div class="section" id="tower-structure">
+    <div class="section-header">
+      <h2>城市结构</h2>
+      <span class="tag">万塔星渊</span>
+    </div>
+    <div class="subtitle">从核心到外缘的四层塔域</div>
+
+    <p><strong>一、中央主塔：初烬之塔</strong></p>
+    <p>整座万塔星渊的绝对核心，最古老、最神秘、最稳定的一座塔。它是阵营最高议会所在地、最高级秘典库所在地、法则观测核心、主传送枢纽，以及通往夹层远征许可的签发中枢。它未必是最高的一座塔，但一定是整个灰烬秘塔真正的"心脏"。</p>
+
+    <p><strong>二、学识塔群</strong></p>
+    <p>围绕中央主塔分布的核心功能塔域，按学派划分：符文塔群、星象塔群、召唤塔群、炼金塔群、咒术塔群、魂术塔群、结界塔群、秘典译解塔群。这里是绝大多数高阶研究、法术开发、材料处理与知识传承的中心。</p>
+
+    <p><strong>三、灰烬下层塔</strong></p>
+    <p>位于较低层、较外围的功能塔域，更接近正常意义上的城市生活区，包括：学徒居住区、工坊区、材料交易区、任务发布区、冒险者停驻区和外来施法者交流区。这部分保证万塔星渊不是一个只属于上层大法师的空壳，而是真正会运转、会呼吸、会接纳众生的阵营主城。</p>
+
+    <p><strong>四、外环漂塔</strong></p>
+    <p>漂浮在最外围、最危险区域的塔。通常承担：监测夹层异动、观测星海异常、封存规则复合体样本、研究禁忌术式、守护边界裂隙。许多外环漂塔本身就接近禁区，普通成员甚至没有进入资格。</p>
+    <div class="relations">
+      <a class="rel" href="#tower-city">← 属于：万塔星渊</a>
+    </div>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <!-- 力量体系 -->
+  <div class="section" id="ash-power">
+    <div class="section-header">
+      <h2>力量体系</h2>
+      <span class="tag">体系</span>
+    </div>
+    <div class="subtitle">对表征律的共鸣、借取与书写</div>
+    <p>灰烬秘塔的力量并非直接拆解宇宙最底层的规则，而是通过符号、仪式、意志、灵魂、语言与共鸣，与"表征律"建立联系。所谓表征律，是宇宙法则向上浮现的可被解释、可被共鸣的规则表层。魔法的本质，便是对这层规则接口的正确调用。</p>
+    <p>因此，火球术不是凭空创造火焰，而是通过符文、咒式与精神聚焦，唤起该区域可被调用的"燃烧表征"；传送术不是硬拆空间，而是借助空间表征律中的折叠节点完成跨位移。魔法不是修改物理，而是通过正确的象征形式，与宇宙已经存在的高层规则接口对话。</p>
+    <div class="callout">魔法是对规则表征层的共鸣、借取与书写。——魔法的本质定义</div>
+    <p>这让魔法天然具备几个特征：强调理解与认知深度，强调咒式的正确性，强调施法者自身与法则的适配，强调环境差异对施法的影响。它拥有极高的自由度与上限，但也更不稳定，更依赖个体的认知、意志与媒介质量。</p>
+
+    <p><strong>战斗风格</strong></p>
+    <p>灰烬秘塔在战斗中不一定是最高爆发，也不一定是最硬的路线，但一定是变化最多、机制最深、上限最高的路线之一。他们擅长远程术式打击、区域控制、元素组合、召唤与契约、结界与防护、诅咒与削弱、辅助与强化、仪式型大招，以及概念型禁术。这个阵营最强的地方不是"数值大"，而是"选择多、构筑深、变化大"。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 升级路线与资源 -->
+  <div class="section" id="ash-growth">
+    <div class="section-header">
+      <h2>升级路线与资源</h2>
+      <span class="tag">体系</span>
+    </div>
+    <div class="subtitle">探索 → 知识 → 法术 → 材料 → 构筑 → 法器</div>
+    <p>灰烬秘塔的成长逻辑不是工业制造，也不是吞噬进化，而是：进入夹层探索 → 搜寻遗迹、古卷、禁书、法则残片 → 解锁新的法术分支与知识树 → 收集高阶施法材料 → 制作卷轴、药剂、法器、附魔装备 → 优化自己的法术构筑 → 前往更危险的区域获取更高阶知识。这条路线最核心的资源不是单纯金币或经验，而是知识密度。</p>
+
+    <p><strong>核心资源</strong></p>
+    <p><strong>秘典与知识</strong>——包括古卷、石板、失落法则、仪式记录、夹层研究档案等，是最核心的成长资源。</p>
+    <p><strong>魔法材料</strong>——包括晶石、秘银、灵髓、元素残渣、魂砂、星辉碎片、异界植材等，用于炼金、附魔和法器制造。</p>
+    <p><strong>法术媒介</strong>——包括法杖核心、咒印骨片、星图盘、结界锚点、召唤触媒等，决定法术的品质、稳定性与上限。</p>
+
+    <img class="illust" src="%E6%88%AA%E5%B1%8F2026-03-16%20%E4%B8%8B%E5%8D%888.48.48.png" alt="秘典殿堂——浮空书卷与奥术核心">
+    <div class="illust-caption">秘典殿堂 · 知识即力量</div>
+    <div class="callout">对灰烬秘塔而言，真正的力量并不来自肌肉，也不来自机器，而来自对宇宙语言的不断逼近。</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 组织结构 -->
+  <div class="section" id="ash-org">
+    <div class="section-header">
+      <h2>组织结构</h2>
+      <span class="tag">体系</span>
+    </div>
+    <div class="subtitle">从秘塔议会到远征前线</div>
+
+    <p><strong>秘塔议会</strong>——最高层，负责总路线、重大研究许可、夹层探索权限、禁术封存审批。</p>
+    <p><strong>初烬守塔人</strong>——主塔统御者，阵营最高领袖。</p>
+    <p><strong>学派首席</strong>——各大塔群的学派领袖，负责不同领域研究与教学。</p>
+    <p><strong>远征部门</strong>——专门负责夹层探索、知识回收、异常样本运输与封存。</p>
+    <p><strong>典籍部门</strong>——负责秘典翻译、法术整理、知识归档与禁书管理。</p>
+    <p><strong>炼金与附魔部门</strong>——负责材料处理、法器制造与装备支援。</p>
+  </div>
+
+  <div class="visual-break">· · ·</div>
+
+  <!-- 立场与气质 -->
+  <div class="section" id="ash-stance">
+    <div class="section-header">
+      <h2>阵营气质</h2>
+      <span class="tag">气质与立场</span>
+    </div>
+    <div class="subtitle">守着古老知识的星海塔群</div>
+    <p>灰烬秘塔不是明亮温和的学院派。他们通常显得冷静、克制、高傲、谨慎，极度重视知识，对未知充满敬畏但绝不会因此止步。他们可能会看不起鲁莽，但绝不会拒绝危险知识本身。</p>
+    <p>他们进入夹层，不是为了朝圣，不是为了掠食，也不只是为了开采，而是为了解读失落法则、搜寻远古秘典、回收异常知识、获取高阶施法材料、研究规则复合体留下的残响，将不可理解之物重新纳入可解释的秩序之中。真正驱动他们的，是一种近乎宗教般的求知欲。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 对外立场 -->
+  <div class="section" id="ash-views">
+    <div class="section-header">
+      <h2>对外立场</h2>
+      <span class="tag">气质与立场</span>
+    </div>
+    <div class="subtitle">他们如何看待另外两条路线</div>
+
+    <p><strong>对至构联邦（科技侧）</strong></p>
+    <p>"你们擅长把规则做成机器，却未必真正读懂规则的语言。你们固化的是本底律中最稳定的部分，但那些无法被提纯、无法脱离个体天赋而成立的法则段，你们永远触碰不到。"在他们看来，科技可以高效量产，但止步于表征律的门外。</p>
+
+    <p><strong>对灵肉圣所（血肉侧）</strong></p>
+    <p>"你们太急于把未知吞进身体，却未必能保证自己仍旧是自己。"在他们看来，血肉进化是一条危险而不可逆的道路，它能带来力量，也可能在不知不觉中把人推向失控。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 夹层观 -->
+  <div class="section" id="ash-interlayer">
+    <div class="section-header">
+      <h2>夹层观</h2>
+      <span class="tag">气质与立场</span>
+    </div>
+    <div class="subtitle">他们眼中的夹层</div>
+    <img class="illust" src="unnamed.jpg" alt="符文封印之物——锁链与紫色能量">
+    <div class="illust-caption">夹层遗物 · 被封印的法则残片</div>
+    <p>对于灰烬秘塔而言，夹层不是单纯的禁区，也不是矿场，更不是猎场。夹层是失落法则的图书馆，是神明实验留下的残页，是被封印的知识墓园，也是距离宇宙真相最近的裂缝。所以他们探索夹层时的态度，不是征服，而是解读。</p>
+    <div class="callout">纵群星成灰，法则仍将被铭记。</div>
+    <div class="relations">
+      <a class="rel" href="世界观图谱.html#interlayer">→ 世界设定：夹层</a>
+      <a class="rel" href="世界观图谱.html#rule-complex">→ 世界设定：规则复合体</a>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => link.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function filterNav(query) {
+  const q = query.trim().toLowerCase();
+  navLinks.forEach(link => {
+    const name = (link.dataset.name || link.textContent).toLowerCase();
+    link.classList.toggle('search-hidden', q !== '' && !name.includes(q));
+  });
+  document.querySelectorAll('.nav-section').forEach(s => {
+    if (q) s.classList.remove('collapsed');
+  });
+}
+</script>
+
+</body>
+</html>
